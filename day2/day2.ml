@@ -6,11 +6,8 @@ let list_from_file_str (file : string) =
     (fun x -> x |> String.length > 0)
     (String.split_on_char '\n' (read_file file))
 
-let lines = list_from_file_str "day2_test.txt"
-
-(*
+let lines = list_from_file_str "day2.txt"
 let _ = List.iter (fun x -> print_endline x) lines
-*)
 
 let convert_to_list_of_lists input =
   List.map
@@ -21,66 +18,47 @@ let convert_to_list_of_lists input =
       |> List.map int_of_string (* Convert each substring to an integer *))
     input
 
-let print_list_of_lists list_of_lists =
-  let print_list lst =
-    lst
-    |> List.map string_of_int (* Convert each number to a string *)
-    |> String.concat "; " (* Join the numbers with "; " *)
-    |> Printf.printf "[%s]" (* Print the formatted list *)
-  in
-  Printf.printf "[";
-  list_of_lists
-  |> List.iteri (fun i lst ->
-         if i > 0 then Printf.printf "; ";
-         (* Add separator for lists *)
-         print_list lst);
-  Printf.printf "]\n"
-
-let fold_2d_list f acc list_of_lists =
-  List.fold_left
-    (fun acc inner_list -> List.fold_left f acc inner_list)
-    acc list_of_lists
-
-(* Helper to check if a list is strictly increasing *)
-let is_strictly_increasing lst =
+let rec increasing lst =
   match lst with
-  | [] | [ _ ] ->
-      false (* Empty or single-element lists cannot be strictly increasing *)
-  | _ -> List.for_all2 ( < ) lst (List.tl lst)
+  | [] -> true
+  | [ _ ] -> true
+  | x :: y :: rest ->
+      x < y && (y - x >= 1 && y - x <= 3) && increasing (y :: rest)
 
-(* Helper to check if a list is strictly decreasing *)
-let is_strictly_decreasing lst =
+let rec decreasing lst =
   match lst with
-  | [] | [ _ ] ->
-      false (* Empty or single-element lists cannot be strictly decreasing *)
-  | _ -> List.for_all2 ( > ) lst (List.tl lst)
+  | [] -> true
+  | [ _ ] -> true
+  | x :: y :: rest ->
+      x > y && (x - y >= 1 && x - y <= 3) && decreasing (y :: rest)
 
-(* Check each row for increasing or decreasing *)
-let check_rows list_of_lists =
-  List.map
-    (fun row ->
-      if is_strictly_increasing row then `Increasing
-      else if is_strictly_decreasing row then `Decreasing
-      else `Neither)
-    list_of_lists
+(* Day 1 *)
+let day1 lines =
+  List.fold_right
+    (fun item acc ->
+      if increasing item || decreasing item then acc + 1 else acc)
+    lines 0
 
-(* DAY1 *)
+(* Day 2 *)
+let rec second_check lst idx acc =
+  if idx == List.length lst then acc
+  else
+    let copy_lst = List.filteri (fun i item -> i != idx) lst in
+    let new_bool = increasing copy_lst || decreasing copy_lst in
+    second_check lst (idx + 1) (acc || new_bool)
+
+let day2 lines =
+  List.fold_right
+    (fun row acc ->
+      if (increasing row || decreasing row) || second_check row 0 false then
+        acc + 1
+      else acc)
+    lines 0
+
 let _ =
-  let lst_of_lst = convert_to_list_of_lists lines in
-  let sum = fold_2d_list (fun acc x -> acc + x) 0 lst_of_lst in
-  let _ = Printf.printf "%d\n" sum in
-  let res = check_rows lst_of_lst in
-  let _ =
-    List.iter
-      (fun x ->
-        match x with
-        | `Increasing -> Printf.printf "Increasing\n"
-        | `Decreasing -> Printf.printf "Decreasing\n"
-        | `Neither -> Printf.printf "Neither\n")
-      res
-  in
+  let lines = convert_to_list_of_lists lines in
+  let day1_answer = day1 lines in
+  let day2_answer = day2 lines in
+  let _ = Printf.printf "DAY 1: %d\n" day1_answer in
+  let _ = Printf.printf "DAY 2: %d\n" day2_answer in
   ()
-(*
-    let num_list = List.map int_of_string num_lst in
-    List.iter (fun x -> Printf.printf "%d " x) num_list
-    *)
