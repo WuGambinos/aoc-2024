@@ -4,3 +4,4 @@ src/*.cmo
 src/*.o
 src/*.hi
 src/*.out
+/src/__pycahce__/

@@ -1,9 +1,6 @@
-f = open('day3.txt', 'r')
+from helper import read_file_to_string
 
-input = ""
-for line in f:
-    line = line.strip()
-    input += line
+input = read_file_to_string("../inputs/day3.txt")
 
 """ 
 REGEX 

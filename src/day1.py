@@ -11,6 +11,7 @@ def day1():
 
     left_list.sort()
     right_list.sort()
+
     sum = 0
     for i in range(len(left_list)):
         dist = abs(left_list[i] - right_list[i])
