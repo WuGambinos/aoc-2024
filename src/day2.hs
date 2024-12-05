@@ -20,7 +20,7 @@ checkCondition1 lst = all (\(x, y) -> x > y && (x - y >= 1 && x - y <= 3)) (zip 
 checkCondition2 :: [Int] -> Bool
 checkCondition2 lst = all (\(x, y) -> x < y && (y - x >= 1 && y - x <= 3)) (zip lst (tail lst))
 
--- Day 1
+-- Part 1
 valid :: [[Int]] -> Int
 valid =
   foldr
@@ -33,7 +33,7 @@ valid =
     )
     0
 
--- Day 2
+-- Part 2
 secondCheck :: [Int] -> Int -> Bool -> Bool
 secondCheck lst idx acc =
   if idx == length lst

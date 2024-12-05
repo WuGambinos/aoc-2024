@@ -8,8 +8,6 @@ BOARD_SIZE = len(board)
 visited = []
 
 
-
-
 def check_rows(board, idx):
     count = 0
 
@@ -34,65 +32,17 @@ def check_cols(board, idx):
                 count += 1
     return count
 
-def check_upper_left(board, r, c):
-    s = ""
-    count = 0
-    curr_visit = []
-    while r >= 0 and c >= 0:
-        s += board[r][c]
-        curr_visit.insert(0, (r, c))
-
-        if s in  words and curr_visit not in visited:
-            visited.append(curr_visit)
-            print(f"UPPER LEFT({r} {c}): {s}")
-            print(f"UPPER LEFT: VISITED: {curr_visit}")
-            print()
-            count += 1
-            s = ""
-        elif len(s) == 4:
-            curr_visit = []
-
-        r -= 1
-        c -= 1
-    return count
-
-def check_upper_right(board, r, c):
-    s = ""
-    count = 0
-    curr_visit = []
-    while r >= 0 and c <= BOARD_SIZE - 1:
-        s += board[r][c]
-        curr_visit.insert(0, (r, c))
-        if s in  words and curr_visit not in visited:
-            visited.append(curr_visit)
-            print(f"UPPER RIGHT({r} {c}): {s}")
-            print(f"UPPER RIGHT: VISITED: {curr_visit}")
-            print()
-            count += 1
-            s = ""
-        elif len(s) == 4:
-            curr_visit = []
-
-        r -= 1
-        c += 1
-    return count
 
 def check_lower_left(board, r, c):
     s = ""
     count = 0
-    curr_visit = []
     while r <= BOARD_SIZE - 1 and c >= 0:
         s += board[r][c]
-        curr_visit.append((r, c))
-        if s in  words and curr_visit not in visited:
-            visited.append(curr_visit)
-            print(f"LOWER LEFT: ({r} {c}): {s}")
-            print(f"LOWER LEFT: VISITED: {curr_visit}")
+        if s in  words:
+            print(f"LOWER LEFT: ({r - 3} {c + 3}): {s}")
             print()
             count += 1
             s = ""
-        elif len(s) == 4:
-            curr_visit = []
 
         r += 1
         c -= 1
@@ -101,20 +51,14 @@ def check_lower_left(board, r, c):
 def check_lower_right(board, r, c):
     s = ""
     count = 0
-    curr_visit = []
     while r <= BOARD_SIZE - 1 and c <= BOARD_SIZE - 1:
         s += board[r][c]
-        curr_visit.append((r, c))
 
-        if s in  words and curr_visit not in visited:
-            visited.append(curr_visit)
-            print(f"LOWER RIGHT: ({r} {c}): {s}")
-            print(f"LOWER RIGHT: VISITED: {curr_visit}")
+        if s in  words:
+            print(f"LOWER RIGHT: ({r-3} {c-3}): {s}")
             print()
             count += 1
             s = ""
-        elif len(s) == 4:
-            curr_visit = []
 
         r += 1
         c += 1
@@ -125,24 +69,20 @@ def check_lower_right(board, r, c):
 
 def check_diagonals(board):
     count = 0
-    upper_left_total = 0
-    upper_right_total = 0
 
     lower_left_total = 0
     lower_right_total = 0
 
     for row in range(len(board)):
         for col in range(len(board[row])):
-            if row >= WORD_SIZE - 1 and col >= WORD_SIZE - 1:
-                upper_left_total += check_upper_left(board, row, col)
-                upper_right_total += check_upper_right(board, row, col)
                 lower_left_total += check_lower_left(board, row, col)
                 lower_right_total += check_lower_right(board, row, col)
+                """
+                if lower_left_total != 0 or lower_right_total != 0:
+                    print(f"LOWER LEFT: {lower_left_total} LOWER_RIGHT: {lower_right_total}")
+                """
 
-    count += upper_left_total + upper_right_total + lower_left_total + lower_right_total
-    print(f"UPPER LEFT: {upper_left_total} UPPER_RIGHT: {upper_right_total}")
-    print(f"LOWER LEFT: {upper_left_total} LOWER_RIGHT: {upper_right_total}")
-
+    count +=  lower_left_total + lower_right_total
     return count
 
 
@@ -151,6 +91,7 @@ def day1():
     total = 0
     horiz_total = 0
     vert_total = 0
+    diag_total = 0
 
     for idx in range(len(board)):
         horizontal = check_rows(board, idx)
@@ -159,11 +100,13 @@ def day1():
         horiz_total += horizontal 
         vert_total += vertical
         
-    #check_diagonals(board)
-    total += check_diagonals(board)
+    diag_total += check_diagonals(board)
+
+    total += diag_total
 
 
     print("HORIZONTAL: ", horiz_total, "VERTICAL", vert_total)
+    print("DIAG: ", diag_total)
     print("DAY 1: ", total)
 
 
