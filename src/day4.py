@@ -8,6 +8,7 @@ BOARD_SIZE = len(board)
 visited = []
 
 
+
 def check_rows(board, idx):
     count = 0
 
@@ -39,9 +40,11 @@ def check_lower_left(board, r, c):
     while r <= BOARD_SIZE - 1 and c >= 0:
         s += board[r][c]
         if s in  words:
-            print(f"LOWER LEFT: ({r - 3} {c + 3}): {s}")
-            print()
-            count += 1
+            coord_data = (r-3, c+3, "LL")
+            if coord_data not in visited:
+                count += 1
+
+            visited.append(coord_data)
             s = ""
 
         r += 1
@@ -55,17 +58,16 @@ def check_lower_right(board, r, c):
         s += board[r][c]
 
         if s in  words:
-            print(f"LOWER RIGHT: ({r-3} {c-3}): {s}")
-            print()
-            count += 1
+            coord_data = (r-3, c-3, "LR")
+            if coord_data not in visited:
+                count += 1
+
+            visited.append(coord_data)
             s = ""
 
         r += 1
         c += 1
     return count
-
-
-
 
 def check_diagonals(board):
     count = 0
@@ -77,10 +79,7 @@ def check_diagonals(board):
         for col in range(len(board[row])):
                 lower_left_total += check_lower_left(board, row, col)
                 lower_right_total += check_lower_right(board, row, col)
-                """
-                if lower_left_total != 0 or lower_right_total != 0:
-                    print(f"LOWER LEFT: {lower_left_total} LOWER_RIGHT: {lower_right_total}")
-                """
+
 
     count +=  lower_left_total + lower_right_total
     return count
@@ -89,28 +88,22 @@ def check_diagonals(board):
 
 def day1():
     total = 0
-    horiz_total = 0
-    vert_total = 0
-    diag_total = 0
 
     for idx in range(len(board)):
-        horizontal = check_rows(board, idx)
-        vertical  = check_cols(board, idx)
-        total += vertical + horizontal
-        horiz_total += horizontal 
-        vert_total += vertical
+        total += check_rows(board, idx)
+        total +=  check_cols(board, idx)
         
-    diag_total += check_diagonals(board)
+    total += check_diagonals(board)
 
-    total += diag_total
-
-
-    print("HORIZONTAL: ", horiz_total, "VERTICAL", vert_total)
-    print("DIAG: ", diag_total)
     print("DAY 1: ", total)
+
+def day2():
+    total = 0
+    print("DAY 2: ", total)
 
 
 day1()
+day2()
     
 
 
