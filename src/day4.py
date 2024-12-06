@@ -3,18 +3,16 @@ from helper import read_file_to_list
 board = read_file_to_list("../inputs/day4.txt")
 
 words = ["XMAS", "SAMX"]
-WORD_SIZE = 4
+WORD_SIZE = len(words[0])
 BOARD_SIZE = len(board)
 visited = []
-
-
 
 def check_rows(board, idx):
     count = 0
 
     for j in range(len(board)):
         for k in range(j, j+5):
-            if (board[idx][j:k]) in words:
+            if (board[idx][j:k]) == words[0] or board[idx][j:k] == words[1]:
                 count += 1
 
     return count
@@ -29,7 +27,7 @@ def check_cols(board, idx):
                 if k > len(board):
                     break
                 s += board[l][idx]
-            if s in words:
+            if s == words[0] or s == words[1]:
                 count += 1
     return count
 
@@ -37,14 +35,21 @@ def check_cols(board, idx):
 def check_lower_left(board, r, c):
     s = ""
     count = 0
+
+    # Go along diagonal
     while r <= BOARD_SIZE - 1 and c >= 0:
         s += board[r][c]
-        if s in  words:
-            coord_data = (r-3, c+3, "LL")
+
+        if s == words[0] or s == words[1]:
+            origin_r = r - 3
+            origin_c = c + 3
+            coord_data = (origin_r, origin_c, "LL")
+
+            # Avoid duplicates
             if coord_data not in visited:
                 count += 1
+                visited.append(coord_data)
 
-            visited.append(coord_data)
             s = ""
 
         r += 1
@@ -54,15 +59,21 @@ def check_lower_left(board, r, c):
 def check_lower_right(board, r, c):
     s = ""
     count = 0
+
+    # Go along diagonal
     while r <= BOARD_SIZE - 1 and c <= BOARD_SIZE - 1:
         s += board[r][c]
 
-        if s in  words:
-            coord_data = (r-3, c-3, "LR")
+        if s == words[0] or s == words[1]:
+            origin_r = r - 3
+            origin_c = c - 3
+            coord_data = (origin_r, origin_c, "LR")
+
+            # Avoid duplicates
             if coord_data not in visited:
                 count += 1
+                visited.append(coord_data)
 
-            visited.append(coord_data)
             s = ""
 
         r += 1
@@ -72,16 +83,42 @@ def check_lower_right(board, r, c):
 def check_diagonals(board):
     count = 0
 
-    lower_left_total = 0
-    lower_right_total = 0
-
     for row in range(len(board)):
         for col in range(len(board[row])):
-                lower_left_total += check_lower_left(board, row, col)
-                lower_right_total += check_lower_right(board, row, col)
+                count += check_lower_left(board, row, col)
+                count += check_lower_right(board, row, col)
 
+    return count
 
-    count +=  lower_left_total + lower_right_total
+def check_x(board):
+    count = 0
+    x1 = ""
+    x2 = ""
+    
+    # Iterate over board
+    for row in range(len(board)):
+        for col in range(len(board[row])):
+            cell = board[row][col]
+
+            # Middle of X pattern
+            if (cell == 'A'):
+                r = row
+                c = col
+                up_left = (r - 1 >= 0 and c - 1 >= 0)
+                up_right = (r - 1 >= 0 and c + 1 <= BOARD_SIZE - 1)
+                down_left = (r + 1 <= BOARD_SIZE - 1 and c - 1 >= 0)
+                down_right = (r + 1 <= BOARD_SIZE - 1 and c + 1 <= BOARD_SIZE - 1)
+
+                # Check for X pattern
+                if up_left and up_right and down_left and down_right:
+                    x1 = board[r-1][c+1] + cell + board[r+1][c-1]
+                    x2 = board[r-1][c-1] +  cell + board[r+1][c+1]
+
+                    if (x1 == "MAS" or x1 == "SAM") and (x2 == "MAS" or x2 == "SAM"):
+                        count += 1
+
+                    x1 = "" 
+                    x2 = ""
     return count
 
 
@@ -98,12 +135,9 @@ def day1():
     print("DAY 1: ", total)
 
 def day2():
-    total = 0
+    total = check_x(board)
     print("DAY 2: ", total)
 
 
 day1()
 day2()
-    
-
-
