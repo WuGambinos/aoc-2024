@@ -46,14 +46,14 @@ class Solution():
     def __init__(self):
         self.count = 0
 
-    def day1(self):
+    def part1(self):
         self.count = 0
         (init_pos, init_dir) = get_guard_position_and_dir(guard_map)
         print(f"GUARD POS: {init_pos} DIR: {init_dir}")
         s.traverse(guard_map, init_pos, init_dir)
-        print("DAY 1: ", s.count+2)
+        print("PART 1: ", s.count+2)
     
-    def day2(self):
+    def part2(self):
         self.count = 0
         (init_pos, init_dir) = get_guard_position_and_dir(copy_guard_map)
         for r in range(NUM_ROWS):
@@ -62,7 +62,7 @@ class Solution():
                     self.count += 1
 
         print_map(copy_guard_map)
-        print("DAY 2:", self.count)
+        print("PART 2:", self.count)
 
 # Movement Algorithm, 
 # 1. if something in front, turn right 90 degress
@@ -124,5 +124,5 @@ class Solution():
 
 
 s = Solution()
-s.day1()
-s.day2()
+s.part1()
+s.part2()

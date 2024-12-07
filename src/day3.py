@@ -74,7 +74,7 @@ def day2(s):
 """
 
 # CUSTOM
-def parse_memory(s, day2):
+def parse_memory(s, part2):
     first_num = ""
     second_num = ""
     res = 0
@@ -84,7 +84,7 @@ def parse_memory(s, day2):
 
     while i < len(s):
 
-        if (day2):
+        if (part2):
             if s[i:i+4] == "do()":
                 enabled = True
             elif s[i:i+7] == "don't()":
@@ -132,16 +132,14 @@ def parse_memory(s, day2):
             first_num = ""
             second_num = ""
             i += 1
-    if day2:
-        print("DAY 2:", res)
+    if part2:
+        print("PART 2:", res)
     else:
-        print("DAY 1:", res)
+        print("PART 1:", res)
 
 
 
-# Day 1
+# Part 1
 parse_memory(input, False)
-# Day 2
+# Part 2
 parse_memory(input, True)
-#day1(input)
-#day2(input)

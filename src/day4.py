@@ -123,7 +123,7 @@ def check_x(board):
 
 
 
-def day1():
+def part1():
     total = 0
 
     for idx in range(len(board)):
@@ -132,12 +132,12 @@ def day1():
         
     total += check_diagonals(board)
 
-    print("DAY 1: ", total)
+    print("PART 1: ", total)
 
-def day2():
+def part2():
     total = check_x(board)
-    print("DAY 2: ", total)
+    print("PART 2: ", total)
 
 
-day1()
-day2()
+part1()
+part2()
