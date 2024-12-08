@@ -107,17 +107,30 @@ class Solution():
         lines = read_file_to_list("../inputs/day7.txt")
         m = {}
 
+        total = 0
+        line_num = 1
         # Parse data
         for line in lines:
             data = line.split(":")
-            target_val = int(data[0])
+            target_value = int(data[0])
             nums = data[1].strip().split(" ")
             nums = [int(n) for n in nums]
+            t1 = s.recurse(nums, 1, nums[0], False, '*', target_value)
+            t2 = s.recurse(nums, 1, nums[0], False, '+', target_value)
+            t3 = s.recurse(nums, 1, nums[0], False, '||', target_value)
+            if t1 or t2 or t3:
+                print("VALID LINE NUM", line_num-1, target_value, nums)
+                valid += 1
+                total += target_value
+            line_num += 1
+            """
             if target_val not in m:
                 m[target_val] = [nums]
             else: 
                 m[target_val].append(nums)
+            """
         
+        """
         total = 0
         line_num = 1
 
@@ -134,6 +147,7 @@ class Solution():
                     total += k
             
             line_num  += len(v)
+        """
         print(total)
         print("PART 2: ", total)
         print("VALID", valid)
