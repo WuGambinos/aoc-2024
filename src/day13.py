@@ -23,6 +23,52 @@ class Button:
     def print(self):
         print(f"LABEL {self.label} X: {self.dx} Y: {self.dy}")
 
+def compute_gcd(x, y):
+
+   while(y):
+       x, y = y, x % y
+   return x
+
+# This function computes LCM
+def compute_lcm(x, y):
+   lcm = (x*y)//compute_gcd(x,y)
+   return lcm
+
+
+# Solve System of Equation
+def elimination(x1, y1, t1, x2, y2, t2):
+    lcm = compute_lcm(x1, x2)
+    m1 = lcm // x1
+    m2 = lcm // x2
+
+    adjusted_y1 = y1
+    adjusted_y2 = y2
+
+    adjusted_y1 *= m1
+    adjusted_y2 *= m2
+
+    adjusted_t1 = t1
+    adjusted_t2 = t2
+
+    adjusted_t1 *= m1
+    adjusted_t2 *= m2
+
+    new_y = adjusted_y2 - adjusted_y1
+    adjusted_t = adjusted_t2 - adjusted_t1
+
+    if adjusted_t % new_y != 0:
+        return None
+
+    final_y = adjusted_t // new_y
+
+
+    if (t1 - (y1 * final_y)) % x1 != 0:
+        return None
+
+    final_x = (t1 - (y1 * final_y)) // x1
+
+    return (final_x, final_y)
+
 def solve(part2):
     turns = []
     inner = []
@@ -73,6 +119,13 @@ def solve(part2):
             p.x += CONVERSION
             p.y += CONVERSION
 
+        res = elimination(x1, x2, p.x,  y1, y2, p.y)
+        if res != None:
+            total_x, total_y = res[0], res[1]
+            cost = total_x * A_TOKEN_COST + B_TOKEN_COST * total_y
+            total_cost += cost
+
+        """
         eq1 = x1 * x + x2 * y - p.x
         eq2 = y1 * x + y2 * y - p.y
 
@@ -82,6 +135,7 @@ def solve(part2):
         if type(total_x) == sp.core.numbers.Integer and type(total_y) == sp.core.numbers.Integer:
             cost = total_x * A_TOKEN_COST + B_TOKEN_COST * total_y
             total_cost += cost
+        """
 
     if part2:
         print("PART 2", total_cost)
