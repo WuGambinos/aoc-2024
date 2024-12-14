@@ -1,11 +1,7 @@
 from PIL import Image
-import numpy as np
-
-img = Image.new('RGB', (200, 100), color='black')
-img.save('new_image.png')
+from copy import deepcopy
 
 f = open('../inputs/day14.txt')
-
 class Vector:
     def __init__(self, x, y):
         self.x = x
@@ -67,15 +63,14 @@ def safety_factor(grid):
 
     return q1 * q2 * q3 * q4
 
-def move(robot, grid, seconds, frame):
-    for i in range(1, seconds+1):
-        image_grid = np.array(grid_to_image_arr(map_grid))
-        img_array = image_grid * 255
-        img = Image.fromarray(img_array.astype(np.uint8))
-        img.save("my_image" + str(frame[0]) + ".png")
-        frame[0] += 1
 
-        if grid[robot.p.y][robot.p.x] == '1':
+def move(robots, grid):
+
+    for robot in robots:
+
+        if grid[robot.p.y][robot.p.x] == '.':
+            grid[robot.p.y][robot.p.x] = '1'
+        elif grid[robot.p.y][robot.p.x] == '1':
             grid[robot.p.y][robot.p.x] = '.'
         else:
             grid[robot.p.y][robot.p.x] = str(int(grid[robot.p.y][robot.p.x]) - 1)
@@ -109,19 +104,21 @@ def move(robot, grid, seconds, frame):
         else:
             grid[p_y][p_x] = str(int(grid[p_y][p_x]) + 1)
 
-def grid_to_image_arr(grid):
+def create_image(grid, frame):
+    MAX_X = 101
+    MAX_Y = 103
+    img = Image.new('1', (MAX_X, MAX_Y), 'black')
+    pixels = img.load()
 
-    result = []
-    for row in grid:
-        inner = []
-        for c in row:
-            if c =='.':
-                inner.append(0)
+
+    for i in range(MAX_Y):
+        for j in range(MAX_X):
+            if grid[i][j] == '.':
+                pixels[j, i] = 0
             else:
-                inner.append(1)
+                pixels[j, i] = 1
 
-        result.append(inner)
-    return result
+    img.save(f"images/frame_{frame}.png")
 
 def solve():
 
@@ -140,8 +137,10 @@ def solve():
 
 
         r = Robot((p_x, p_y), (v_x, v_y))
+        """
         r.print()
         print()
+        """
         robots.append(r)
 
         if map_grid[p_y][p_x] == '.':
@@ -149,42 +148,20 @@ def solve():
         else:
             map_grid[p_y][p_x] = str(int(map_grid[p_y][p_x]) + 1)
 
+
+    copy_map_grid = deepcopy(map_grid)
+
     seconds = 100
-
-
-    print("INITIAL STATE")
-    print_grid(map_grid)
-    print()
-
-
-
-    """
-    for r in robots:
-        move(r, map_grid, seconds)
-    """ 
-
-    seconds = 2000
-    frame = [0]
-    for (i, r) in enumerate(robots):
-        move(r, map_grid, seconds, frame)
-        #print_grid(map_grid)
-        #print()
-
-    """
-    image_grid = np.array(grid_to_image_arr(map_grid))
-    for row in image_grid:
-        print(row)
-
-    img_array = image_grid * 255
-
-    img = Image.fromarray(img_array.astype(np.uint8))
-
-    img.save("my_image.png")
-    """
-
-
+    for i in range(seconds):
+        move(robots, map_grid)
 
     print("PART 1: ", safety_factor(map_grid))
 
+    #Part 2
+    seconds = 10000
+    for i in range(seconds):
+        print(f"ITERATION: {i}")
+        move(robots, copy_map_grid)
+        create_image(copy_map_grid, i)
 
 solve()

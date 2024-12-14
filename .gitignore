@@ -4,4 +4,6 @@ src/*.cmo
 src/*.o
 src/*.hi
 src/*.out
+src/images
 /src/__pycache__/
+./venv
