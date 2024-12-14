@@ -1,5 +1,8 @@
-from os import walk
+from PIL import Image
+import numpy as np
 
+img = Image.new('RGB', (200, 100), color='black')
+img.save('new_image.png')
 
 f = open('../inputs/day14.txt')
 
@@ -64,8 +67,13 @@ def safety_factor(grid):
 
     return q1 * q2 * q3 * q4
 
-def move(robot, grid, seconds):
-    for _ in range(1, seconds+1):
+def move(robot, grid, seconds, frame):
+    for i in range(1, seconds+1):
+        image_grid = np.array(grid_to_image_arr(map_grid))
+        img_array = image_grid * 255
+        img = Image.fromarray(img_array.astype(np.uint8))
+        img.save("my_image" + str(frame[0]) + ".png")
+        frame[0] += 1
 
         if grid[robot.p.y][robot.p.x] == '1':
             grid[robot.p.y][robot.p.x] = '.'
@@ -101,6 +109,20 @@ def move(robot, grid, seconds):
         else:
             grid[p_y][p_x] = str(int(grid[p_y][p_x]) + 1)
 
+def grid_to_image_arr(grid):
+
+    result = []
+    for row in grid:
+        inner = []
+        for c in row:
+            if c =='.':
+                inner.append(0)
+            else:
+                inner.append(1)
+
+        result.append(inner)
+    return result
+
 def solve():
 
     robots = []
@@ -135,8 +157,31 @@ def solve():
     print()
 
 
+
+    """
     for r in robots:
         move(r, map_grid, seconds)
+    """ 
+
+    seconds = 2000
+    frame = [0]
+    for (i, r) in enumerate(robots):
+        move(r, map_grid, seconds, frame)
+        #print_grid(map_grid)
+        #print()
+
+    """
+    image_grid = np.array(grid_to_image_arr(map_grid))
+    for row in image_grid:
+        print(row)
+
+    img_array = image_grid * 255
+
+    img = Image.fromarray(img_array.astype(np.uint8))
+
+    img.save("my_image.png")
+    """
+
 
 
     print("PART 1: ", safety_factor(map_grid))
